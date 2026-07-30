@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026.08 日本沖繩家庭旅遊 🇯🇵 行程表</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body {
+font-family: 'Microsoft JhengHei', '微軟正黑體', 'Noto Sans TC', sans-serif;
+background-color: #f3f4f6;
+font-size: 16px;
+line-height: 1.6;
+}
+.editable:focus {
+outline: 2px solid #0284c7;
+background-color: #f0f9ff;
+border-radius: 4px;
+padding: 2px 4px;
+}
+/* 自訂地區下拉選單樣式 */
+.region-select {
+appearance: none;
+-webkit-appearance: none;
+cursor: pointer;
+border: none;
+outline: none;
+font-weight: 700;
+font-size: 0.95rem;
+}
+/* 隱藏滾動條但保留滾動功能 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+/* 拖曳樣式 */
+tr.dragging {
+  opacity: 0.4;
+  background-color: #e0f2fe !important;
+}
+tr.drag-over {
+  border-top: 2px solid #0284c7 !important;
+}
+@media print {
+.no-print {
+display: none !important;
+}
+.page-break {
+page-break-before: always;
+}
+body {
+background-color: white;
+padding: 0;
+}
+.shadow-lg, .shadow-md, .shadow-sm {
+box-shadow: none !important;
+border: 1px solid #e5e7eb;
+}
+}
+</style>
+</head>
+<body class="text-gray-900 pb-16">
+
+<!-- Toast 提示訊息 -->
+<div id="toast" class="fixed top-5 right-5 z-50 bg-slate-800 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 transition-all duration-300 transform -translate-y-20 opacity-0 pointer-events-none">
+<div id="toastIcon" class="bg-emerald-500 text-white p-1.5 rounded-lg text-sm">
+<i class="fa-solid fa-circle-check"></i>
+</div>
+<span id="toastMsg" class="text-sm font-medium">已成功儲存變更！</span>
+</div>
+
+<!-- 刪除確認 Modal 對話框 -->
+<div id="confirmModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200 no-print">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full mx-4 p-6 border border-gray-100 transform scale-95 transition-transform duration-200" id="confirmModalBox">
+    <div class="flex items-center gap-3 text-rose-600 mb-3">
+      <div class="bg-rose-100 p-2.5 rounded-full">
+        <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+      </div>
+      <h3 class="text-lg font-bold text-gray-900" id="confirmTitle">確認刪除項目</h3>
+    </div>
+    <p class="text-sm text-gray-600 mb-6 leading-relaxed" id="confirmMessage">您確定要刪除這筆行程嗎？此動作可透過「復原」按鈕取消。</p>
+    <div class="flex items-center justify-end gap-3">
+      <button onclick="closeConfirmModal()" class="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 text-xs font-semibold hover:bg-gray-50 transition">
+        取消
+      </button>
+      <button id="confirmExecuteBtn" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-sm transition">
+        確認刪除
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 置頂區域容器 (僅保留精簡版 Header 與天數快速導覽列) -->
+<div class="sticky top-0 z-40 bg-gray-100 shadow-md border-b border-gray-200/80 no-print">
+  <!-- 頁首標題 (針對手機版優化邊距與字體大小) -->
+  <header class="bg-gradient-to-r from-sky-600 to-blue-700 text-white py-2.5 md:py-3.5 px-3 md:px-4 shadow-sm">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2 md:gap-3">
+      <div class="text-center md:text-left">
+        <div class="flex items-center justify-center md:justify-start gap-1.5 text-sky-200 text-xs md:text-sm font-semibold tracking-wider uppercase mb-0.5">
+          <i class="fa-solid fa-plane-departure"></i> Family Vacation 2026
+        </div>
+        <h1 class="text-xl md:text-3xl font-bold leading-tight">2026.08 日本沖繩家庭旅遊 🇯🇵</h1>
+        <p class="text-sky-100 text-xs md:text-sm font-medium mt-1">日期：2026.8.6 (四)~2026.8.10 (一) ｜ 人數：5位</p>
+      </div>
+      <div class="flex flex-wrap items-center justify-center gap-2">
+        <div id="syncStatus" class="bg-emerald-500/20 text-emerald-100 border border-emerald-400/30 px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 backdrop-blur-sm">
+          <span id="syncDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="syncText">雲端即時同步中</span>
+        </div>
+        <button id="undoBtn" onclick="undoAction()" title="復原 (Ctrl+Z)" class="bg-slate-700 hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed text-white px-2.5 py-1.5 rounded-lg text-xs md:text-sm font-bold transition flex items-center gap-1 shadow" disabled>
+          <i class="fa-solid fa-rotate-left"></i> <span class="hidden sm:inline">復原</span>
+        </button>
+        <button onclick="saveToCloud()" class="bg-sky-500 hover:bg-sky-400 text-white px-2.5 py-1.5 rounded-lg text-xs md:text-sm font-bold transition flex items-center gap-1 shadow backdrop-blur-sm">
+          <i class="fa-solid fa-cloud-arrow-up"></i> <span class="hidden sm:inline">儲存</span>
+        </button>
+        <button onclick="addNewDay()" class="bg-amber-500 hover:bg-amber-600 text-white px-2.5 py-1.5 rounded-lg text-xs md:text-sm font-bold transition flex items-center gap-1 shadow">
+          <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">新增天數</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 天數快速導覽選單按鈕列 -->
+  <div class="max-w-6xl mx-auto px-3 md:px-4 py-2 border-t border-gray-200/60 flex items-center gap-2 overflow-x-auto no-scrollbar" id="dayNavContainer">
+    <span class="text-xs md:text-sm font-bold text-gray-700 whitespace-nowrap flex items-center gap-1 mr-1">
+      <i class="fa-solid fa-location-dot text-sky-600"></i> 快速導覽:
+    </span>
+    <!-- 按鈕由 JavaScript 自動生成 -->
+  </div>
+</div>
+
+<!-- 頁面主要內容區域 -->
+<div class="max-w-6xl mx-auto px-4 mt-4 md:mt-6">
+
+  <!-- 旅遊重點備忘摘要卡片 -->
+  <div class="mb-5">
+    <div class="bg-white rounded-xl shadow-sm p-3.5 md:p-4 border border-gray-200 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3.5">
+      <div class="flex items-start gap-2.5 p-1 border-b sm:border-b-0 sm:border-r border-gray-100 pb-2 sm:pb-1">
+        <div class="bg-sky-100 text-sky-700 p-2.5 rounded-lg text-base shrink-0 mt-0.5">
+          <i class="fa-solid fa-car"></i>
+        </div>
+        <div>
+          <span class="text-xs text-gray-600 font-bold block uppercase tracking-wider">OTS 租車預約</span>
+          <span class="text-sm font-bold text-gray-900">預約號碼：OTS1207030</span>
+          <p class="text-xs text-gray-600 font-medium mt-0.5">接駁站：國內線 10-A</p>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-2.5 p-1 border-b sm:border-b-0 md:border-r border-gray-100 pb-2 sm:pb-1">
+        <div class="bg-amber-100 text-amber-700 p-2.5 rounded-lg text-base shrink-0 mt-0.5">
+          <i class="fa-solid fa-beer-mug-empty"></i>
+        </div>
+        <div>
+          <span class="text-xs text-gray-600 font-bold block uppercase tracking-wider">Orion 酒廠預約</span>
+          <span class="text-sm font-bold text-gray-900">預訂5位 (¥5000/臻已付)</span>
+          <p class="text-xs text-rose-600 font-bold mt-0.5">⚠️ 前一天需按確認連結</p>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-2.5 p-1 border-b sm:border-b-0 sm:border-r border-gray-100 pb-2 sm:pb-1">
+        <div class="bg-emerald-100 text-emerald-700 p-2.5 rounded-lg text-base shrink-0 mt-0.5">
+          <i class="fa-solid fa-hotel"></i>
+        </div>
+        <div>
+          <span class="text-xs text-gray-600 font-bold block uppercase tracking-wider">住宿</span>
+          <span class="text-xs font-bold text-gray-900 block">D1-2: ペンションパシフィカ古宇利</span>
+          <span class="text-xs font-bold text-gray-900 block">D3-4: Hotel Art Stay 那霸國際通</span>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-2.5 p-1">
+        <div class="bg-purple-100 text-purple-700 p-2.5 rounded-lg text-base shrink-0 mt-0.5">
+          <i class="fa-solid fa-plane"></i>
+        </div>
+        <div>
+          <span class="text-xs text-gray-600 font-bold block uppercase tracking-wider">航班概覽</span>
+          <span class="text-xs font-semibold text-gray-800 block">台北：樂桃 (9:35去 / 16:45回)</span>
+          <span class="text-xs font-semibold text-gray-800 block">高雄：虎航 (9:30去 / 14:00回)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 搜尋與提示 -->
+  <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-5 no-print">
+    <input type="text" id="searchInput" onkeyup="filterSchedule()" placeholder="搜尋景點、餐廳或備註..." class="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white shadow-sm font-medium">
+    <div class="flex items-center gap-3 text-xs md:text-sm text-gray-600 shrink-0 self-start sm:self-auto font-medium">
+      <span><i class="fa-solid fa-rotate text-sky-600 mr-1"></i>可拖曳調整順序</span>
+      <span class="md:hidden text-sky-700 font-bold"><i class="fa-solid fa-arrows-left-right mr-1"></i>可左右滑動檢視細節</span>
+    </div>
+  </div>
+</div>
+
+<!-- 行程表容器 -->
+<div id="scheduleContainer" class="space-y-8">
+<!-- 行程內容由 JavaScript 動態載入 / 初始化 -->
+</div>
+</div>
+
+<!-- Firebase 模組載入與邏輯 -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+// 初始化 Firebase 設定
+const firebaseConfig = typeof __firebase_config !== 'undefined'
+? JSON.parse(__firebase_config)
+: { apiKey: "", authDomain: "", projectId: "", storageBucket: "", messagingSenderId: "", appId: "" };
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'okinawa-trip-2026';
+const itineraryDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'itinerary', 'main');
+
+let currentUser = null;
+let isEditing = false; // 防干擾標記：當使用者正在編輯時不覆蓋 UI
+
+// 歷史紀錄 Stack 管理復原 (Undo)
+window.historyStack = [];
+const MAX_HISTORY = 20;
+
+window.pushHistoryState = function() {
+  if (typeof window.extractScheduleData === 'function') {
+    const currentState = JSON.stringify(window.extractScheduleData());
+    if (window.historyStack.length === 0 || window.historyStack[window.historyStack.length - 1] !== currentState) {
+      window.historyStack.push(currentState);
+      if (window.historyStack.length > MAX_HISTORY) {
+        window.historyStack.shift();
+      }
+      window.updateUndoButtonState();
+    }
+  }
+};
+
+window.updateUndoButtonState = function() {
+  const undoBtn = document.getElementById('undoBtn');
+  if (undoBtn) {
+    undoBtn.disabled = window.historyStack.length <= 1;
+  }
+};
+
+window.undoAction = function() {
+  if (window.historyStack.length > 1) {
+    window.historyStack.pop();
+    const previousStateJSON = window.historyStack[window.historyStack.length - 1];
+    try {
+      const previousData = JSON.parse(previousStateJSON);
+      window.renderScheduleUI(previousData, true);
+      window.saveToCloud(true);
+      window.showToast('已成功復原上一步動作！');
+    } catch(e) {
+      console.error("Undo error:", e);
+    }
+  } else {
+    window.showToast('沒有可復原的操作', true);
+  }
+  window.updateUndoButtonState();
+};
+
+// 鍵盤快捷鍵 Ctrl+Z / Cmd+Z 復原
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+    if (window.historyStack.length > 1) {
+      e.preventDefault();
+      window.undoAction();
+    }
+  }
+  if (e.key === 'Escape') {
+    window.closeConfirmModal();
+  }
+});
+
+// 預設預載資料 (當資料庫尚未建立時使用)
+const initialDefaultData = [
+{
+day: 1,
+title: "8月06日 (週四) － 桃園/小港出發 ➔ 那霸會合 ➔ 北部古宇利島",
+items: [
+{ time: "06:00<br>07:00-09:30", region: "台灣", title: "台北組出發 (桃園機場 T1)", desc: "樂桃航空 MM924：09:35 桃園出發 ➔ 12:20 抵達那霸。" },
+{ time: "09:30", region: "台灣", title: "高雄組出發 (小港機場)", desc: "虎航 IT288：09:30 小港出發 ➔ 12:25 抵達那霸。" },
+{ time: "12:30", region: "那霸", title: "那霸機場會合 & 入境", desc: "領取行李、辦理入境。預計在此尋找午餐地點。" },
+{ time: "13:30 - 15:00", region: "那霸", title: "OTS 租車接送與取車 (臨空豐崎營業所)", desc: "• 找到國內線接駁巴士站 <strong>「10-A」</strong>，工作人員在 OTS 旗子旁等候。<br>• 確認預約名字與號碼（預約號碼：<span class=\"bg-amber-200 px-1.5 py-0.5 rounded font-mono font-bold text-gray-900\">OTS1207030</span>）。<br>• 接駁車每 20 分鐘一班，車程約 13 分鐘。<br>• ⚠️ 取車重點：務必仔細檢查車身是否有刮痕，並全程拍照錄影存證！" },
+{ time: "15:00 - 17:00", region: "北部", title: "那霸 ➔ 前往古宇利島", desc: "• 車程預計抓 2 小時。<br>• 💡 上路前請惡補與熟悉日本右駕習慣及交通規則！<br>• 若時間提前抵達，可先前往飯店辦理 Check-in 及放行李。" },
+{ time: "17:00 之後", region: "北部", title: "心形岩 & 沖繩自販祈神社 (透明御守)", desc: "• 渡海原駐車場 (停車費 ¥300)。<br>• 心型岩停車場內有「沖繩自販祈神社」，販售透明御守 (營業至 18:00)。<br>• 🌊 觀賞重點：出發前請確認日本氣象廳潮汐預測，挑選接近干潮 (退潮) 時刻前往，愛心石才會完全露出水面！<br>• 車程約 10 分鐘。晚餐可於周邊景觀餐廳享用。" },
+{ time: "晚上", region: "北部", title: "住宿 1：ペンションパシフィカ古宇利", desc: "古宇利島太平洋民宿，辦理入住與休息。" }
+]
+},
+{
+day: 2,
+title: "8月07日 (週五) － 北部景點 ➔ 海景星巴克 ➔ Orion 酒廠 ➔ 美美麗水族館 ➔ 阿古豬 / 燒肉",
+items: [
+{ time: "07:00 - 08:00", region: "北部", title: "起床盥洗 & 準備出發", desc: "享用早餐並準備本日車程。" },
+{ time: "08:30 - 10:30", region: "北部", title: "星巴克 Akemio Terrace店 (21世紀之森公園)", desc: "• 2026年4/15 新開幕，譽為「日本最美海景星巴克」！<br>• 5 大亮點：30秒直達海灘、獨家水果星冰樂、唯一美人魚風獅爺造型。<br>• 需注意現場免費/收費停車場相關規定。" },
+{ time: "11:00 - 12:00", region: "北部", title: "Orion 啤酒廠 (Happy Park)", desc: "• 預約資訊：已預訂 5 人 (¥1000/人)。<br>• ⚠️ <strong>重要提醒：前一天必須點擊官方驗證連結進行確認！</strong><br>• 導覽與啤酒體驗。" },
+{ time: "12:00 - 14:00", region: "北部", title: "午餐：暖暮拉麵 (名護店) / 海人料理 海邦丸", desc: "• <strong>暖暮拉麵 (名護店)</strong>：門口有專用停車場，17:30後常大排長龍，炒飯與定食令人驚艷。<br>• <strong>海人料理 海邦丸</strong>：沖繩必吃兩大美食「本部牛」與「阿古豬」。阿古豬無腥味、膽固醇僅一般豬肉 1/4，健康鮮美！" },
+{ time: "14:30 - 17:30", region: "北部", title: "海洋博公園 美美麗水族館 (美ら海水族館)", desc: "• 從餐廳車程約 30 分鐘。<br>• 欣賞鯨鯊與黑潮之海巨大水槽，請預先確認當天展演時間。" },
+{ time: "18:30 - 20:30", region: "北部", title: "晚餐：燒肉本部牧場 本部總店", desc: "• 待預訂項目。頂級本部牛燒肉饗宴。<br>• 晚餐後返回住宿點休息。" },
+{ time: "晚上", region: "北部", title: "住宿 1：ペンションパシフィカ古宇利", desc: "續住同一家民宿，準備明日整理行李退房。" }
+]
+},
+{
+day: 3,
+title: "8月08日 (週六) － 美浜美食 ➔ 浦添 PARCO CITY ➔ 還車 ➔ 那霸市區 & 國際通",
+items: [
+{ time: "08:30", region: "北部", title: "退房，出發前往中部美浜", desc: "車程約 1.5 小時。路上可先買星巴克飲品。" },
+{ time: "11:15 - 13:00", region: "中部", title: "午餐首選：グルメ迴轉壽司市場 (美浜店)", desc: "• 美國村人氣 No.1！建議儘早前往（電話預訂），太晚去大蝦與和牛等高級食材容易完售。<br>• 💵 <strong>注意：無法刷卡，必須準備足夠現金！</strong><br>• 備案（若 11:30 判斷等候過久）：暖暮拉麵 (北谷店) 或 浜屋沖繩麵（推薦三種盛そば、まかない飯炙燒飯）。" },
+{ time: "13:30 - 17:20", region: "中部", title: "浦添西海岸 PARCO CITY 購物", desc: "• 全沖繩最大旗艦店，集結 UNIQLO、無印良品等 250 個品牌。<br>• 3F HMV & BOOKS / 喜久屋書店：動漫周邊區有豐富日系進口拼圖。<br>• 5F 屋頂停車場瞭望台可遠眺絕美大海（無座位）。<br>• 美食街可品嚐 88牛排、御殿山、A&W 漢堡。" },
+{ time: "17:30 - 18:00", region: "那霸", title: "ORIX 還車 (美榮橋站前營業所)", desc: "• 浦添前往美榮橋車程約 20 分鐘。<br>• ⛽ <strong>還車重點：請務必先在附近加油站將油箱加滿！</strong>" },
+{ time: "18:00 之後", region: "那霸", title: "飯店 Check-in & 國際通逛街散策", desc: "• 步行至 Hotel Art Stay 那霸國際通辦理入住放行李。<br>• 晚餐於國際通周邊自由品嚐沖繩在地美食、居酒屋與藥妝店採買。" },
+{ time: "晚上", region: "那霸", title: "住宿 2：Hotel Art Stay 那霸國際通", desc: "入住位於國際通核心地段飯店。" }
+]
+},
+{
+day: 4,
+title: "8月09日 (週日) － 那霸單軌電車一日遊 ➔ 首里城 ➔ 國際通大採購",
+items: [
+{ time: "09:00 - 12:00", region: "那霸", title: "搭乘單軌電車 ➔ 首里城公園", desc: "• 購買沖繩單軌電車一日券 (¥800/人)。<br>• 參觀琉球王國歷史遺址首里城與金城町石疊道。" },
+{ time: "12:30 - 14:00", region: "那霸", title: "午餐：第一牧志公設市場", desc: "• 1樓選購新鮮海鮮，2樓代客料理享用現煮海鮮大餐！" },
+{ time: "14:30 - 18:00", region: "那霸", title: "壺屋通文青散策 & 新都心/國際通採買", desc: "• 走訪壺屋陶藝街選購傳統琉球燒與風獅爺。<br>• 可搭乘電車至新都心 (DFS免稅店、San-A 那霸 Main Place) 補貨採買伴手禮。" },
+{ time: "晚上", region: "那霸", title: "住宿 2：Hotel Art Stay 那霸國際通", desc: "續住，整理行李準備明日退房返台。" }
+]
+},
+{
+day: 5,
+title: "8月10日 (週一) － 那霸最後採買 ➔ 前往那霸機場 ➔ 賦歸台灣",
+items: [
+{ time: "09:00 - 11:30", region: "那霸", title: "退房辦理 & 國際通最後巡禮", desc: "寄放行李，補買未買齊的伴手禮與紀念品。" },
+{ time: "11:30 - 12:30", region: "那霸", title: "搭乘單軌電車前往那霸機場", desc: "自美榮橋站搭乘電車至那霸機場站 (約 20 分鐘)。" },
+{ time: "12:30 - 14:00", region: "那霸", title: "高雄組報到 (虎航 IT289)", desc: "• 14:00 預計起飛 ➔ 14:45 抵達高雄小港機場。<br>• 提醒：請提早 2-2.5 小時完成托運與報到。" },
+{ time: "14:00 - 16:45", region: "那霸", title: "台北組報到 (樂桃 MM925) & 機場免稅店採買", desc: "• 16:45 預計起飛 ➔ 17:25 抵達桃園國際機場 T1。<br>• 於國內線/國際線航廈享用最後的沖繩美食與購買伴手禮。" }
+]
+}
+];
+
+// 初始化身份驗證
+async function initAuth() {
+try {
+if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+await signInWithCustomToken(auth, __initial_auth_token);
+} else {
+await signInAnonymously(auth);
+}
+} catch (err) {
+console.error("Auth error:", err);
+}
+}
+
+// 將當前 DOM 行程提取轉換為 JSON 資料
+window.extractScheduleData = function() {
+const daysData = [];
+const dayCards = document.querySelectorAll('.day-card');
+
+dayCards.forEach((card, index) => {
+const dayNum = parseInt(card.getAttribute('data-day')) || (index + 1);
+const dayTitle = card.querySelector('h2').innerHTML;
+const items = [];
+
+const rows = card.querySelectorAll('tbody tr');
+rows.forEach(row => {
+const cells = row.querySelectorAll('td');
+if (cells.length >= 5) {
+const time = cells[1].innerHTML;
+const regionSelect = cells[2].querySelector('select');
+const region = regionSelect ? regionSelect.value : '那霸';
+const title = cells[3].innerHTML;
+const desc = cells[4].innerHTML;
+
+items.push({ time, region, title, desc });
+}
+});
+
+daysData.push({ day: dayNum, title: dayTitle, items });
+});
+
+return daysData;
+};
+
+// 更新頂部導覽選單按鈕列
+function renderDayNav(daysData) {
+  const navContainer = document.getElementById('dayNavContainer');
+  const labelHTML = `<span class="text-xs md:text-sm font-bold text-gray-700 whitespace-nowrap flex items-center gap-1 mr-1"><i class="fa-solid fa-location-dot text-sky-600"></i> 快速導覽:</span>`;
+  
+  let buttonsHTML = '';
+  daysData.forEach((dayObj, index) => {
+    const dayNum = dayObj.day || (index + 1);
+    const dateMatch = dayObj.title ? dayObj.title.match(/\d+月\d+日/) : null;
+    const dateStr = dateMatch ? dateMatch[0] : `D${dayNum}`;
+
+    buttonsHTML += `
+      <button onclick="window.scrollToDay(${dayNum})" class="bg-white hover:bg-sky-50 text-sky-900 border border-sky-300 px-3 py-1.5 rounded-full text-xs md:text-sm font-bold whitespace-nowrap shadow-sm hover:border-sky-500 transition flex items-center gap-1.5">
+        <span class="bg-sky-600 text-white text-xs px-2 py-0.5 rounded-full font-bold">D${dayNum}</span>
+        <span>${dateStr}</span>
+      </button>
+    `;
+  });
+
+  navContainer.innerHTML = labelHTML + buttonsHTML;
+}
+
+// 平滑滾動定位至指定天數卡片
+window.scrollToDay = function(dayNum) {
+  const targetCard = document.querySelector(`.day-card[data-day="${dayNum}"]`);
+  if (targetCard) {
+    const stickyHeaderHeight = document.querySelector('.sticky').offsetHeight || 220;
+    const elementPosition = targetCard.getBoundingClientRect().top + window.pageYOffset;
+    const offsetPosition = elementPosition - stickyHeaderHeight - 16;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    });
+  }
+};
+
+// 綁定表格列的拖曳功能
+let draggedRow = null;
+
+window.initDragAndDrop = function() {
+  const rows = document.querySelectorAll('#scheduleContainer tbody tr');
+  rows.forEach(row => {
+    row.addEventListener('dragstart', (e) => {
+      draggedRow = row;
+      row.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      if (window.pushHistoryState) window.pushHistoryState();
+    });
+
+    row.addEventListener('dragend', () => {
+      if (draggedRow) {
+        draggedRow.classList.remove('dragging');
+        draggedRow = null;
+      }
+      document.querySelectorAll('#scheduleContainer tbody tr').forEach(r => r.classList.remove('drag-over'));
+      if (window.pushHistoryState) window.pushHistoryState();
+      if (window.saveToCloud) window.saveToCloud(true);
+      window.showToast('已更新行程順序，並同步至雲端！');
+    });
+
+    row.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      if (!draggedRow || draggedRow === row) return;
+      
+      if (draggedRow.parentNode === row.parentNode) {
+        row.classList.add('drag-over');
+        const bounding = row.getBoundingClientRect();
+        const offset = e.clientY - bounding.top;
+        if (offset > bounding.height / 2) {
+          row.parentNode.insertBefore(draggedRow, row.nextSibling);
+        } else {
+          row.parentNode.insertBefore(draggedRow, row);
+        }
+      }
+    });
+
+    row.addEventListener('dragleave', () => {
+      row.classList.remove('drag-over');
+    });
+  });
+};
+
+// 渲染資料至 UI 畫面
+window.renderScheduleUI = function(daysData, forceRender = false) {
+if (isEditing && !forceRender) return;
+
+const container = document.getElementById('scheduleContainer');
+container.innerHTML = '';
+
+daysData.forEach((dayObj, dIndex) => {
+const dayCard = document.createElement('div');
+const dayNum = dayObj.day || (dIndex + 1);
+dayCard.className = 'day-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-200';
+dayCard.setAttribute('data-day', dayNum);
+dayCard.id = `day-card-${dayNum}`;
+
+// 僅針對 Day 6 之後的新增天數提供刪除天數按鈕 (保護前 5 天 8/6-8/10)
+let deleteDayBtnHTML = '';
+if (dayNum > 5) {
+  deleteDayBtnHTML = `
+  <button onclick="window.requestDeleteDay(this)" class="btn-delete-day bg-rose-500 hover:bg-rose-600 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow">
+    <i class="fa-solid fa-trash-can"></i> 刪除此天
+  </button>
+  `;
+}
+
+let rowsHTML = '';
+(dayObj.items || []).forEach(item => {
+const regionStyles = {
+'北部': 'bg-blue-100 text-blue-900',
+'中部': 'bg-purple-100 text-purple-900',
+'那霸': 'bg-amber-100 text-amber-900',
+'台灣': 'bg-gray-200 text-gray-800'
+};
+const styleClass = regionStyles[item.region] || 'bg-amber-100 text-amber-900';
+
+rowsHTML += `
+<tr class="hover:bg-sky-50/50 transition cursor-move border-b border-gray-100" draggable="true">
+<td class="py-3 px-2 text-center no-print select-none">
+  <div class="flex items-center justify-center gap-1.5">
+    <i class="fa-solid fa-grip-vertical text-gray-400 hover:text-gray-700 cursor-grab text-base p-1" title="拖曳排序"></i>
+    <button onclick="window.requestDeleteRow(this)" class="text-gray-400 hover:text-rose-600 transition p-1" title="刪除行程"><i class="fa-solid fa-trash-can text-base"></i></button>
+  </div>
+</td>
+<td class="py-3 px-3 md:px-4 text-sm md:text-base font-bold text-gray-800 editable break-words" contenteditable="true">${item.time}</td>
+<td class="py-3 px-2 md:px-3">
+<select onchange="window.updateRegionStyle(this)" class="region-select ${styleClass} text-xs md:text-sm px-2.5 py-1 rounded-md font-bold">
+<option value="北部" ${item.region === '北部' ? 'selected' : ''}>北部</option>
+<option value="中部" ${item.region === '中部' ? 'selected' : ''}>中部</option>
+<option value="那霸" ${item.region === '那霸' ? 'selected' : ''}>那霸</option>
+<option value="台灣" ${item.region === '台灣' ? 'selected' : ''}>台灣</option>
+</select>
+</td>
+<td class="py-3 px-3 md:px-4 text-sm md:text-base font-bold text-sky-950 editable break-words" contenteditable="true">${item.title}</td>
+<td class="py-3 px-3 md:px-4 text-sm md:text-base text-gray-800 font-normal editable break-words leading-relaxed" contenteditable="true">${item.desc}</td>
+</tr>
+`;
+});
+
+dayCard.innerHTML = `
+<div class="bg-sky-600 text-white px-4 md:px-6 py-3.5 md:py-4 flex flex-wrap justify-between items-center gap-2">
+<div class="flex flex-col gap-1">
+<div>
+<span class="bg-sky-800 text-sky-100 text-xs md:text-sm font-bold px-3 py-1 rounded-full uppercase tracking-wide inline-block">Day ${dayNum}</span>
+</div>
+<h2 class="text-xl md:text-2xl font-bold editable" contenteditable="true">${dayObj.title}</h2>
+</div>
+<div class="flex items-center gap-2 text-xs md:text-sm no-print">
+<button onclick="window.addScheduleRow(this)" class="bg-sky-500 hover:bg-sky-700 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow">
+<i class="fa-solid fa-plus"></i> 新增行程
+</button>
+${deleteDayBtnHTML}
+</div>
+</div>
+
+<div class="overflow-x-auto relative">
+<div class="md:hidden text-xs text-sky-800 bg-sky-50/90 px-3 py-1.5 flex items-center justify-between border-b border-sky-100 no-print font-bold">
+  <span><i class="fa-solid fa-arrows-left-right text-sky-600 mr-1.5"></i>可左右滑動檢視完整表格內容</span>
+</div>
+<table class="w-full text-left border-collapse min-w-[650px] md:min-w-full">
+<thead>
+<tr class="bg-sky-100/70 text-sky-950 text-xs md:text-sm font-bold uppercase border-b border-sky-200">
+<th class="py-3 px-2 w-16 text-center no-print">操作</th>
+<th class="py-3 px-3 md:px-4 w-28 md:w-36">時間</th>
+<th class="py-3 px-2 md:px-3 w-20 md:w-28">地區</th>
+<th class="py-3 px-3 md:px-4 w-40 md:w-56">地點 / 行程</th>
+<th class="py-3 px-3 md:px-4">特色、重點資訊與細節</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-100 text-sm md:text-base">
+${rowsHTML}
+</tbody>
+</table>
+</div>
+`;
+
+container.appendChild(dayCard);
+});
+
+// 同步更新頂部導覽列按鈕與初始化拖曳事件
+renderDayNav(daysData);
+window.initDragAndDrop();
+}
+
+// 儲存變更寫入 Firestore 雲端
+window.saveToCloud = async function(silent = false) {
+if (!currentUser) return;
+try {
+const updateText = document.getElementById('syncText');
+if (updateText) updateText.textContent = "資料儲存中...";
+const data = window.extractScheduleData();
+await setDoc(itineraryDocRef, {
+days: data,
+updatedAt: new Date().toISOString(),
+updatedBy: currentUser.uid
+}, { merge: true });
+
+if (updateText) updateText.textContent = "已即時同步至雲端";
+if (!silent) window.showToast('雲端資料已成功儲存！');
+} catch (err) {
+console.error("Save error:", err);
+window.showToast('儲存失敗，請檢查網路連線', true);
+}
+};
+
+// 啟動與監聽 Firestore 變更
+onAuthStateChanged(auth, async (user) => {
+currentUser = user;
+if (!user) return;
+
+// 檢查文件是否存在，若不存在則初始化寫入
+try {
+const docSnap = await getDoc(itineraryDocRef);
+if (!docSnap.exists()) {
+await setDoc(itineraryDocRef, { days: initialDefaultData, createdAt: new Date().toISOString() });
+}
+} catch (err) {
+console.error("Init doc error:", err);
+}
+
+// 建立即時監聽
+onSnapshot(itineraryDocRef, (snapshot) => {
+if (snapshot.exists()) {
+const data = snapshot.data();
+if (data && data.days) {
+window.renderScheduleUI(data.days);
+if (window.historyStack.length === 0) {
+  window.pushHistoryState();
+}
+}
+}
+}, (error) => {
+console.error("Firestore onSnapshot error:", error);
+});
+});
+
+initAuth();
+
+// 監聽 focus 與 blur 來鎖定編輯狀態並上記錄
+document.addEventListener('focusin', (e) => {
+if (e.target.classList.contains('editable')) {
+isEditing = true;
+}
+});
+
+document.addEventListener('focusout', (e) => {
+if (e.target.classList.contains('editable')) {
+isEditing = false;
+window.pushHistoryState();
+window.saveToCloud(true);
+}
+});
+</script>
+
+<!-- 原有 UI 輔助腳本與 Modal 雙重確認邏輯 -->
+<script>
+// Modal 控制邏輯
+let pendingDeleteAction = null;
+
+function showConfirmModal(title, msg, onConfirm) {
+  const modal = document.getElementById('confirmModal');
+  const modalBox = document.getElementById('confirmModalBox');
+  const titleEl = document.getElementById('confirmTitle');
+  const msgEl = document.getElementById('confirmMessage');
+  const confirmBtn = document.getElementById('confirmExecuteBtn');
+
+  titleEl.textContent = title;
+  msgEl.textContent = msg;
+
+  pendingDeleteAction = onConfirm;
+
+  modal.classList.remove('opacity-0', 'pointer-events-none');
+  modalBox.classList.remove('scale-95');
+  modalBox.classList.add('scale-100');
+
+  confirmBtn.onclick = function() {
+    if (typeof pendingDeleteAction === 'function') {
+      pendingDeleteAction();
+    }
+    closeConfirmModal();
+  };
+}
+
+function closeConfirmModal() {
+  const modal = document.getElementById('confirmModal');
+  const modalBox = document.getElementById('confirmModalBox');
+
+  modalBox.classList.remove('scale-100');
+  modalBox.classList.add('scale-95');
+  modal.classList.add('opacity-0', 'pointer-events-none');
+  pendingDeleteAction = null;
+}
+
+// 點擊 Modal 外部背景自動關閉
+document.getElementById('confirmModal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'confirmModal') {
+    closeConfirmModal();
+  }
+});
+
+// 顯示提示訊息 (Toast)
+function showToast(msg, isError = false) {
+const toast = document.getElementById('toast');
+const toastMsg = document.getElementById('toastMsg');
+const toastIcon = document.getElementById('toastIcon');
+toastMsg.textContent = msg;
+if (isError) {
+toastIcon.className = "bg-rose-500 text-white p-1.5 rounded-lg text-sm";
+toastIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+} else {
+toastIcon.className = "bg-emerald-500 text-white p-1.5 rounded-lg text-sm";
+toastIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+}
+
+toast.classList.remove('opacity-0', '-translate-y-20', 'pointer-events-none');
+setTimeout(() => {
+toast.classList.add('opacity-0', '-translate-y-20', 'pointer-events-none');
+}, 2500);
+}
+
+// 更新地區選單樣式顏色
+function updateRegionStyle(selectElement) {
+const val = selectElement.value;
+selectElement.className = 'region-select text-xs md:text-sm px-2.5 py-1 rounded-md font-bold ';
+if (val === '北部') {
+selectElement.classList.add('bg-blue-100', 'text-blue-900');
+} else if (val === '中部') {
+selectElement.classList.add('bg-purple-100', 'text-purple-900');
+} else if (val === '那霸') {
+selectElement.classList.add('bg-amber-100', 'text-amber-900');
+} else if (val === '台灣') {
+selectElement.classList.add('bg-gray-200', 'text-gray-800');
+}
+if (window.pushHistoryState) window.pushHistoryState();
+if (window.saveToCloud) window.saveToCloud(true);
+}
+
+// 新增單列行程
+function addScheduleRow(btn) {
+if (window.pushHistoryState) window.pushHistoryState();
+const tbody = btn.closest('.day-card').querySelector('tbody');
+const tr = document.createElement('tr');
+tr.className = 'hover:bg-sky-50/50 transition cursor-move border-b border-gray-100';
+tr.setAttribute('draggable', 'true');
+tr.innerHTML = `
+<td class="py-3 px-2 text-center no-print select-none">
+  <div class="flex items-center justify-center gap-1.5">
+    <i class="fa-solid fa-grip-vertical text-gray-400 hover:text-gray-700 cursor-grab text-base p-1" title="拖曳排序"></i>
+    <button onclick="requestDeleteRow(this)" class="text-gray-400 hover:text-rose-600 transition p-1" title="刪除行程"><i class="fa-solid fa-trash-can text-base"></i></button>
+  </div>
+</td>
+<td class="py-3 px-3 md:px-4 text-sm md:text-base font-bold text-gray-800 editable break-words" contenteditable="true">新時間段</td>
+<td class="py-3 px-2 md:px-3">
+<select onchange="updateRegionStyle(this)" class="region-select bg-amber-100 text-amber-900 text-xs md:text-sm px-2.5 py-1 rounded-md font-bold">
+<option value="北部">北部</option>
+<option value="中部">中部</option>
+<option value="那霸" selected>那霸</option>
+<option value="台灣">台灣</option>
+</select>
+</td>
+<td class="py-3 px-3 md:px-4 text-sm md:text-base font-bold text-sky-950 editable break-words" contenteditable="true">新增景點或活動</td>
+<td class="py-3 px-3 md:px-4 text-sm md:text-base text-gray-800 font-normal editable break-words leading-relaxed" contenteditable="true">請填寫詳細說明與注意事項...</td>
+`;
+tbody.appendChild(tr);
+
+if (window.initDragAndDrop) window.initDragAndDrop();
+if (window.pushHistoryState) window.pushHistoryState();
+showToast('已新增行程，並寫入雲端！');
+if (window.saveToCloud) window.saveToCloud(true);
+}
+
+// 請求刪除單列行程 (觸發雙重確認)
+function requestDeleteRow(btn) {
+  const tr = btn.closest('tr');
+  const titleText = tr.querySelectorAll('td')[3]?.innerText.trim() || '該行程項目';
+
+  showConfirmModal(
+    '確認刪除行程',
+    `您確定要刪除「${titleText}」嗎？點擊確認後可透過頂部「復原」按鈕回復。`,
+    () => deleteRow(tr)
+  );
+}
+
+// 執行刪除單列行程
+function deleteRow(tr) {
+  if (window.pushHistoryState) window.pushHistoryState();
+  tr.remove();
+  if (window.pushHistoryState) window.pushHistoryState();
+  showToast('已刪除該行程項目');
+  if (window.saveToCloud) window.saveToCloud(true);
+}
+
+// 請求刪除整天行程 (觸發雙重確認)
+window.requestDeleteDay = function(btn) {
+  const dayCard = btn.closest('.day-card');
+  const dayNum = dayCard.getAttribute('data-day');
+  const dayTitle = dayCard.querySelector('h2')?.innerText.trim() || `Day ${dayNum}`;
+
+  showConfirmModal(
+    '確認刪除天數',
+    `您確定要刪除「${dayTitle}」及其所有行程內容嗎？此動作可透過頂部「復原」按鈕恢復。`,
+    () => window.deleteDay(dayCard)
+  );
+};
+
+// 執行刪除整天行程並重新對齊編號
+window.deleteDay = function(dayCard) {
+  if (window.pushHistoryState) window.pushHistoryState();
+  dayCard.remove();
+
+  // 重新調整剩餘天數的 Day 編號與刪除按鈕狀態
+  const dayCards = document.querySelectorAll('.day-card');
+  dayCards.forEach((card, idx) => {
+    const newDayNum = idx + 1;
+    card.setAttribute('data-day', newDayNum);
+    card.id = `day-card-${newDayNum}`;
+    
+    // 更新 Day 標籤
+    const badge = card.querySelector('span.bg-sky-800');
+    if (badge) {
+      badge.textContent = `Day ${newDayNum}`;
+    }
+
+    // 動態維護刪除按鈕 (僅 Day > 5 保留)
+    const headerBtns = card.querySelector('.flex.items-center.gap-2.no-print');
+    if (headerBtns) {
+      let delBtn = headerBtns.querySelector('.btn-delete-day');
+      if (newDayNum > 5) {
+        if (!delBtn) {
+          headerBtns.insertAdjacentHTML('beforeend', `
+            <button onclick="window.requestDeleteDay(this)" class="btn-delete-day bg-rose-500 hover:bg-rose-600 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow">
+              <i class="fa-solid fa-trash-can"></i> 刪除此天
+            </button>
+          `);
+        }
+      } else {
+        if (delBtn) delBtn.remove();
+      }
+    }
+  });
+
+  const data = window.extractScheduleData();
+  if (window.renderDayNav) window.renderDayNav(data);
+  if (window.pushHistoryState) window.pushHistoryState();
+  showToast('已成功刪除該天數！');
+  if (window.saveToCloud) window.saveToCloud(true);
+};
+
+// 計算指定天數對應的日期與星期 (以 2026/08/06 出發為基準 Day 1)
+function getCalculatedDateString(dayIndex) {
+const startDate = new Date(2026, 7, 6);
+const targetDate = new Date(startDate);
+targetDate.setDate(startDate.getDate() + (dayIndex - 1));
+
+const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+const date = String(targetDate.getDate()).padStart(2, '0');
+const weekDays = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+const weekDayStr = weekDays[targetDate.getDay()];
+
+return `${month}月${date}日 (${weekDayStr})`;
+}
+
+// 新增天數卡片
+function addNewDay() {
+if (window.pushHistoryState) window.pushHistoryState();
+
+const container = document.getElementById('scheduleContainer');
+const totalDays = container.querySelectorAll('.day-card').length + 1;
+const dayDiv = document.createElement('div');
+dayDiv.className = 'day-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-200';
+dayDiv.setAttribute('data-day', totalDays);
+dayDiv.id = `day-card-${totalDays}`;
+
+// 新增的天數 (Day 6+) 顯示刪除按鈕
+let deleteDayBtnHTML = '';
+if (totalDays > 5) {
+  deleteDayBtnHTML = `
+    <button onclick="window.requestDeleteDay(this)" class="btn-delete-day bg-rose-500 hover:bg-rose-600 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow">
+      <i class="fa-solid fa-trash-can"></i> 刪除此天
+    </button>
+  `;
+}
+
+const formattedDateStr = getCalculatedDateString(totalDays);
+dayDiv.innerHTML = `
+<div class="bg-sky-600 text-white px-4 md:px-6 py-3.5 md:py-4 flex flex-wrap justify-between items-center gap-2">
+<div class="flex flex-col gap-1">
+<div>
+<span class="bg-sky-800 text-sky-100 text-xs md:text-sm font-bold px-3 py-1 rounded-full uppercase tracking-wide inline-block">Day ${totalDays}</span>
+</div>
+<h2 class="text-xl md:text-2xl font-bold editable" contenteditable="true">${formattedDateStr} － 自訂行程地點</h2>
+</div>
+<div class="flex items-center gap-2 text-xs md:text-sm no-print">
+<button onclick="addScheduleRow(this)" class="bg-sky-500 hover:bg-sky-700 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow">
+<i class="fa-solid fa-plus"></i> 新增行程
+</button>
+${deleteDayBtnHTML}
+</div>
+</div>
+
+<div class="overflow-x-auto relative">
+<div class="md:hidden text-xs text-sky-800 bg-sky-50/90 px-3 py-1.5 flex items-center justify-between border-b border-sky-100 no-print font-bold">
+  <span><i class="fa-solid fa-arrows-left-right text-sky-600 mr-1.5"></i>可左右滑動檢視完整表格內容</span>
+</div>
+<table class="w-full text-left border-collapse min-w-[650px] md:min-w-full">
+<thead>
+<tr class="bg-sky-100/70 text-sky-950 text-xs md:text-sm font-bold uppercase border-b border-sky-200">
+<th class="py-3 px-2 w-16 text-center no-print">操作</th>
+<th class="py-3 px-3 md:px-4 w-28 md:w-36">時間</th>
+<th class="py-3 px-2 md:px-3 w-20 md:w-28">地區</th>
+<th class="py-3 px-3 md:px-4 w-40 md:w-56">地點 / 行程</th>
+<th class="py-3 px-3 md:px-4">特色、重點資訊與細節</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-100 text-sm md:text-base">
+<tr class="hover:bg-sky-50/50 transition cursor-move border-b border-gray-100" draggable="true">
+<td class="py-3 px-2 text-center no-print select-none">
+  <div class="flex items-center justify-center gap-1.5">
+    <i class="fa-solid fa-grip-vertical text-gray-400 hover:text-gray-700 cursor-grab text-base p-1" title="拖曳排序"></i>
+    <button onclick="requestDeleteRow(this)" class="text-gray-400 hover:text-rose-600 transition p-1" title="刪除行程"><i class="fa-solid fa-trash-can text-base"></i></button>
+  </div>
+</td>
+<td class="py-3 px-3 md:px-4 text-sm md:text-base font-bold text-gray-800 editable break-words" contenteditable="true">09:00 - 12:00</td>
+<td class="py-3 px-2 md:px-3">
+<select onchange="updateRegionStyle(this)" class="region-select bg-amber-100 text-amber-900 text-xs md:text-sm px-2.5 py-1 rounded-md font-bold">
+<option value="北部">北部</option>
+<option value="中部">中部</option>
+<option value="那霸" selected>那霸</option>
+<option value="台灣">台灣</option>
+</select>
+</td>
+<td class="py-3 px-3 md:px-4 text-sm md:text-base font-bold text-sky-950 editable break-words" contenteditable="true">行程名稱</td>
+<td class="py-3 px-3 md:px-4 text-sm md:text-base text-gray-800 font-normal editable break-words leading-relaxed" contenteditable="true">行程注意事項...</td>
+</tr>
+</tbody>
+</table>
+</div>
+`;
+container.appendChild(dayDiv);
+
+if (window.renderDayNav) {
+  const data = window.extractScheduleData();
+  renderDayNav(data);
+}
+if (window.initDragAndDrop) window.initDragAndDrop();
+if (window.pushHistoryState) window.pushHistoryState();
+showToast(`已成功新增 Day ${totalDays} 的行程頁面！`);
+if (window.saveToCloud) window.saveToCloud(true);
+}
+
+// 搜尋過濾行程項目
+function filterSchedule() {
+  const input = document.getElementById('searchInput').value.toLowerCase();
+  const rows = document.querySelectorAll('#scheduleContainer tbody tr');
+
+  rows.forEach(row => {
+    const text = row.innerText.toLowerCase();
+    if (text.includes(input)) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+}
+</script>
+</body>
+</html>
