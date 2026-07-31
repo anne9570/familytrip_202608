@@ -14,6 +14,27 @@ background-color: #f3f4f6;
 font-size: 16px;
 line-height: 1.6;
 }
+
+/* 提升手機版基礎字級，方便長輩清晰閱讀 */
+@media (max-width: 640px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+/* 切換電腦版 (641px 以上) 時，行程內容與文字一律改為 14px */
+@media (min-width: 641px) {
+  body {
+    font-size: 14px;
+  }
+  .editable, 
+  #scheduleContainer table td, 
+  #scheduleContainer table th,
+  #scheduleContainer .editable {
+    font-size: 14px !important;
+  }
+}
+
 .editable:focus {
 outline: 2px solid #0284c7;
 background-color: #f0f9ff;
@@ -97,28 +118,28 @@ border: 1px solid #e5e7eb;
 
 <!-- 置頂區域容器 (僅保留精簡版 Header 與天數快速導覽列) -->
 <div class="sticky top-0 z-40 bg-gray-100 shadow-md border-b border-gray-200/80 no-print">
-  <!-- 頁首標題 (針對手機版優化邊距與字體大小) -->
-  <header class="bg-gradient-to-r from-sky-600 to-blue-700 text-white py-2.5 md:py-3.5 px-3 md:px-4 shadow-sm">
+  <!-- 頁首標題 (針對長輩閱讀優化字體大小) -->
+  <header class="bg-gradient-to-r from-sky-600 to-blue-700 text-white py-3 md:py-4 px-3 md:px-4 shadow-sm">
     <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2 md:gap-3">
       <div class="text-center md:text-left">
-        <div class="flex items-center justify-center md:justify-start gap-1.5 text-sky-200 text-xs md:text-sm font-semibold tracking-wider uppercase mb-0.5">
+        <div class="flex items-center justify-center md:justify-start gap-1.5 text-sky-200 text-sm md:text-base font-semibold tracking-wider uppercase mb-0.5">
           <i class="fa-solid fa-plane-departure"></i> Family Vacation 2026
         </div>
-        <h1 class="text-xl md:text-3xl font-bold leading-tight">2026.08 日本沖繩家庭旅遊 🇯🇵</h1>
-        <p class="text-sky-100 text-xs md:text-sm font-medium mt-1">日期：2026.8.6 (四)~2026.8.10 (一) ｜ 人數：5位</p>
+        <h1 class="text-2xl md:text-3xl font-bold leading-tight">2026.08 日本沖繩家庭旅遊 🇯🇵</h1>
+        <p class="text-sky-100 text-sm md:text-base font-medium mt-1">日期：2026.8.6 (四)~2026.8.10 (一) ｜ 人數：5位</p>
       </div>
       <div class="flex flex-wrap items-center justify-center gap-2">
-        <div id="syncStatus" class="bg-emerald-500/20 text-emerald-100 border border-emerald-400/30 px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 backdrop-blur-sm">
-          <span id="syncDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <div id="syncStatus" class="bg-emerald-500/20 text-emerald-100 border border-emerald-400/30 px-3 py-1.5 rounded-full text-xs md:text-sm font-semibold flex items-center gap-1.5 backdrop-blur-sm">
+          <span id="syncDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
           <span id="syncText">雲端即時同步中</span>
         </div>
-        <button id="undoBtn" onclick="undoAction()" title="復原 (Ctrl+Z)" class="bg-slate-700 hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed text-white px-2.5 py-1.5 rounded-lg text-xs md:text-sm font-bold transition flex items-center gap-1 shadow" disabled>
+        <button id="undoBtn" onclick="undoAction()" title="復原 (Ctrl+Z)" class="bg-slate-700 hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed text-white px-3 py-2 rounded-lg text-sm font-bold transition flex items-center gap-1 shadow" disabled>
           <i class="fa-solid fa-rotate-left"></i> <span class="hidden sm:inline">復原</span>
         </button>
-        <button onclick="saveToCloud()" class="bg-sky-500 hover:bg-sky-400 text-white px-2.5 py-1.5 rounded-lg text-xs md:text-sm font-bold transition flex items-center gap-1 shadow backdrop-blur-sm">
+        <button onclick="saveToCloud()" class="bg-sky-500 hover:bg-sky-400 text-white px-3 py-2 rounded-lg text-sm font-bold transition flex items-center gap-1 shadow backdrop-blur-sm">
           <i class="fa-solid fa-cloud-arrow-up"></i> <span class="hidden sm:inline">儲存</span>
         </button>
-        <button onclick="addNewDay()" class="bg-amber-500 hover:bg-amber-600 text-white px-2.5 py-1.5 rounded-lg text-xs md:text-sm font-bold transition flex items-center gap-1 shadow">
+        <button onclick="addNewDay()" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-2 rounded-lg text-sm font-bold transition flex items-center gap-1 shadow">
           <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">新增天數</span>
         </button>
       </div>
@@ -126,8 +147,8 @@ border: 1px solid #e5e7eb;
   </header>
 
   <!-- 天數快速導覽選單按鈕列 -->
-  <div class="max-w-6xl mx-auto px-3 md:px-4 py-2 border-t border-gray-200/60 flex items-center gap-2 overflow-x-auto no-scrollbar" id="dayNavContainer">
-    <span class="text-xs md:text-sm font-bold text-gray-700 whitespace-nowrap flex items-center gap-1 mr-1">
+  <div class="max-w-6xl mx-auto px-3 md:px-4 py-2.5 border-t border-gray-200/60 flex items-center gap-2 overflow-x-auto no-scrollbar" id="dayNavContainer">
+    <span class="text-sm font-bold text-gray-700 whitespace-nowrap flex items-center gap-1 mr-1">
       <i class="fa-solid fa-location-dot text-sky-600"></i> 快速導覽:
     </span>
     <!-- 按鈕由 JavaScript 自動生成 -->
@@ -139,48 +160,48 @@ border: 1px solid #e5e7eb;
 
   <!-- 旅遊重點備忘摘要卡片 -->
   <div class="mb-5">
-    <div class="bg-white rounded-xl shadow-sm p-3.5 md:p-4 border border-gray-200 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3.5">
-      <div class="flex items-start gap-2.5 p-1 border-b sm:border-b-0 sm:border-r border-gray-100 pb-2 sm:pb-1">
-        <div class="bg-sky-100 text-sky-700 p-2.5 rounded-lg text-base shrink-0 mt-0.5">
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-200 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="flex items-start gap-3 p-1 border-b sm:border-b-0 sm:border-r border-gray-100 pb-3 sm:pb-1">
+        <div class="bg-sky-100 text-sky-700 p-3 rounded-lg text-lg shrink-0 mt-0.5">
           <i class="fa-solid fa-car"></i>
         </div>
         <div>
-          <span class="text-xs text-gray-600 font-bold block uppercase tracking-wider">OTS 租車預約</span>
-          <span class="text-sm font-bold text-gray-900">預約號碼：OTS1207030</span>
-          <p class="text-xs text-gray-600 font-medium mt-0.5">接駁站：國內線 10-A</p>
+          <span class="text-xs text-gray-700 font-bold block uppercase tracking-wider">OTS 租車預約</span>
+          <span class="text-base font-bold text-gray-900">預約號碼：OTS1207030</span>
+          <p class="text-sm text-gray-600 font-medium mt-0.5">接駁站：國內線 10-A</p>
         </div>
       </div>
 
-      <div class="flex items-start gap-2.5 p-1 border-b sm:border-b-0 md:border-r border-gray-100 pb-2 sm:pb-1">
-        <div class="bg-amber-100 text-amber-700 p-2.5 rounded-lg text-base shrink-0 mt-0.5">
+      <div class="flex items-start gap-3 p-1 border-b sm:border-b-0 md:border-r border-gray-100 pb-3 sm:pb-1">
+        <div class="bg-amber-100 text-amber-700 p-3 rounded-lg text-lg shrink-0 mt-0.5">
           <i class="fa-solid fa-beer-mug-empty"></i>
         </div>
         <div>
-          <span class="text-xs text-gray-600 font-bold block uppercase tracking-wider">Orion 酒廠預約</span>
-          <span class="text-sm font-bold text-gray-900">預訂5位 (¥5000/臻已付)</span>
-          <p class="text-xs text-rose-600 font-bold mt-0.5">⚠️ 前一天需按確認連結</p>
+          <span class="text-xs text-gray-700 font-bold block uppercase tracking-wider">Orion 酒廠預約</span>
+          <span class="text-base font-bold text-gray-900">預訂5位 (¥5000/臻已付)</span>
+          <p class="text-sm text-rose-600 font-bold mt-0.5">⚠️ 前一天需按確認連結</p>
         </div>
       </div>
 
-      <div class="flex items-start gap-2.5 p-1 border-b sm:border-b-0 sm:border-r border-gray-100 pb-2 sm:pb-1">
-        <div class="bg-emerald-100 text-emerald-700 p-2.5 rounded-lg text-base shrink-0 mt-0.5">
+      <div class="flex items-start gap-3 p-1 border-b sm:border-b-0 sm:border-r border-gray-100 pb-3 sm:pb-1">
+        <div class="bg-emerald-100 text-emerald-700 p-3 rounded-lg text-lg shrink-0 mt-0.5">
           <i class="fa-solid fa-hotel"></i>
         </div>
         <div>
-          <span class="text-xs text-gray-600 font-bold block uppercase tracking-wider">住宿</span>
-          <span class="text-xs font-bold text-gray-900 block">D1-2: ペンションパシフィカ古宇利</span>
-          <span class="text-xs font-bold text-gray-900 block">D3-4: Hotel Art Stay 那霸國際通</span>
+          <span class="text-xs text-gray-700 font-bold block uppercase tracking-wider">住宿</span>
+          <span class="text-sm font-bold text-gray-900 block">D1-2: ペンションパシフィカ古宇利</span>
+          <span class="text-sm font-bold text-gray-900 block">D3-4: Hotel Art Stay 那霸國際通</span>
         </div>
       </div>
 
-      <div class="flex items-start gap-2.5 p-1">
-        <div class="bg-purple-100 text-purple-700 p-2.5 rounded-lg text-base shrink-0 mt-0.5">
+      <div class="flex items-start gap-3 p-1">
+        <div class="bg-purple-100 text-purple-700 p-3 rounded-lg text-lg shrink-0 mt-0.5">
           <i class="fa-solid fa-plane"></i>
         </div>
         <div>
-          <span class="text-xs text-gray-600 font-bold block uppercase tracking-wider">航班概覽</span>
-          <span class="text-xs font-semibold text-gray-800 block">台北：樂桃 (9:35去 / 16:45回)</span>
-          <span class="text-xs font-semibold text-gray-800 block">高雄：虎航 (9:30去 / 14:00回)</span>
+          <span class="text-xs text-gray-700 font-bold block uppercase tracking-wider">航班概覽</span>
+          <span class="text-sm font-semibold text-gray-800 block">台北：樂桃 (9:35去 / 16:45回)</span>
+          <span class="text-sm font-semibold text-gray-800 block">高雄：虎航 (9:30去 / 14:00回)</span>
         </div>
       </div>
     </div>
@@ -188,8 +209,8 @@ border: 1px solid #e5e7eb;
 
   <!-- 搜尋與提示 -->
   <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-5 no-print">
-    <input type="text" id="searchInput" onkeyup="filterSchedule()" placeholder="搜尋景點、餐廳或備註..." class="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white shadow-sm font-medium">
-    <div class="flex items-center gap-3 text-xs md:text-sm text-gray-600 shrink-0 self-start sm:self-auto font-medium">
+    <input type="text" id="searchInput" onkeyup="filterSchedule()" placeholder="搜尋景點、餐廳或備註..." class="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white shadow-sm font-medium">
+    <div class="flex items-center gap-3 text-sm text-gray-600 shrink-0 self-start sm:self-auto font-medium">
       <span><i class="fa-solid fa-rotate text-sky-600 mr-1"></i>可拖曳調整順序</span>
       <span class="md:hidden text-sky-700 font-bold"><i class="fa-solid fa-arrows-left-right mr-1"></i>可左右滑動檢視細節</span>
     </div>
@@ -208,10 +229,17 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebas
 import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-// 初始化 Firebase 設定
+// 初始化 Firebase 設定 (請在此貼上或替換您的 Firebase 專案金鑰與資訊)
 const firebaseConfig = typeof __firebase_config !== 'undefined'
 ? JSON.parse(__firebase_config)
-: { apiKey: "", authDomain: "", projectId: "", storageBucket: "", messagingSenderId: "", appId: "" };
+: {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "your-project-id.firebaseapp.com",
+    projectId: "your-project-id",
+    storageBucket: "your-project-id.appspot.com",
+    messagingSenderId: "123456789012",
+    appId: "1:123456789012:web:abcdef1234567890"
+  };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -395,21 +423,86 @@ function renderDayNav(daysData) {
     const dateStr = dateMatch ? dateMatch[0] : `D${dayNum}`;
 
     buttonsHTML += `
-      <button onclick="window.scrollToDay(${dayNum})" class="bg-white hover:bg-sky-50 text-sky-900 border border-sky-300 px-3 py-1.5 rounded-full text-xs md:text-sm font-bold whitespace-nowrap shadow-sm hover:border-sky-500 transition flex items-center gap-1.5">
-        <span class="bg-sky-600 text-white text-xs px-2 py-0.5 rounded-full font-bold">D${dayNum}</span>
+      <button onclick="window.scrollToDay(${dayNum})" data-nav-day="${dayNum}" class="nav-day-btn bg-white hover:bg-sky-50 text-sky-900 border border-sky-300 px-3 py-1.5 rounded-full text-xs md:text-sm font-bold whitespace-nowrap shadow-sm hover:border-sky-500 transition-all duration-200 flex items-center gap-1.5">
+        <span class="day-badge bg-sky-600 text-white text-xs px-2 py-0.5 rounded-full font-bold transition-colors">D${dayNum}</span>
         <span>${dateStr}</span>
       </button>
     `;
   });
 
   navContainer.innerHTML = labelHTML + buttonsHTML;
+  if (window.setupScrollSpy) window.setupScrollSpy();
 }
+
+// 設置滾動監聽 (ScrollSpy) 自動高亮導覽列
+let currentObserver = null;
+let isNavClicking = false;
+let navClickTimeout = null;
+
+window.setupScrollSpy = function() {
+  if (currentObserver) {
+    currentObserver.disconnect();
+  }
+
+  const dayCards = document.querySelectorAll('.day-card');
+  if (!dayCards.length) return;
+
+  const observerOptions = {
+    root: null,
+    // 扣除頂部 Sticky Header 高度與下方緩衝區，精確判斷目前可視天數
+    rootMargin: '-120px 0px -60% 0px',
+    threshold: 0
+  };
+
+  currentObserver = new IntersectionObserver((entries) => {
+    // 點擊導覽列滑動期間，暫停背景 ScrollSpy 避免視覺延遲與滾動衝突
+    if (isNavClicking) return;
+
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const dayNum = entry.target.getAttribute('data-day');
+        window.setActiveNav(dayNum, false);
+      }
+    });
+  }, observerOptions);
+
+  dayCards.forEach(card => currentObserver.observe(card));
+};
+
+// 切換導覽按鈕的高亮狀態與滾動自動置中
+window.setActiveNav = function(dayNum, scrollNavIntoView = true) {
+  const navBtns = document.querySelectorAll('.nav-day-btn');
+  navBtns.forEach(btn => {
+    const btnDay = btn.getAttribute('data-nav-day');
+    const badge = btn.querySelector('.day-badge');
+
+    if (btnDay === String(dayNum)) {
+      // 啟用高亮樣式
+      btn.className = 'nav-day-btn bg-sky-600 text-white border border-sky-700 px-3.5 py-1.5 rounded-full text-xs md:text-sm font-bold whitespace-nowrap shadow-md ring-2 ring-sky-300 scale-105 transition-all duration-200 flex items-center gap-1.5';
+      if (badge) badge.className = 'day-badge bg-white text-sky-700 text-xs px-2 py-0.5 rounded-full font-bold';
+
+      // 若導覽列過長超出螢幕，自動滑動導覽列讓該按鈕置中
+      if (scrollNavIntoView) {
+        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    } else {
+      // 恢復預設樣式
+      btn.className = 'nav-day-btn bg-white hover:bg-sky-50 text-sky-900 border border-sky-300 px-3 py-1.5 rounded-full text-xs md:text-sm font-bold whitespace-nowrap shadow-sm hover:border-sky-500 transition-all duration-200 flex items-center gap-1.5';
+      if (badge) badge.className = 'day-badge bg-sky-600 text-white text-xs px-2 py-0.5 rounded-full font-bold';
+    }
+  });
+};
 
 // 平滑滾動定位至指定天數卡片
 window.scrollToDay = function(dayNum) {
+  isNavClicking = true;
+  if (navClickTimeout) clearTimeout(navClickTimeout);
+
+  window.setActiveNav(dayNum, true);
   const targetCard = document.querySelector(`.day-card[data-day="${dayNum}"]`);
   if (targetCard) {
-    const stickyHeaderHeight = document.querySelector('.sticky').offsetHeight || 220;
+    const stickyHeader = document.querySelector('.sticky');
+    const stickyHeaderHeight = stickyHeader ? stickyHeader.offsetHeight : 220;
     const elementPosition = targetCard.getBoundingClientRect().top + window.pageYOffset;
     const offsetPosition = elementPosition - stickyHeaderHeight - 16;
 
@@ -418,6 +511,11 @@ window.scrollToDay = function(dayNum) {
       behavior: 'smooth'
     });
   }
+
+  // 動畫結束後恢復背景 ScrollSpy 監聽
+  navClickTimeout = setTimeout(() => {
+    isNavClicking = false;
+  }, 600);
 };
 
 // 綁定表格列的拖曳功能
@@ -502,23 +600,23 @@ const styleClass = regionStyles[item.region] || 'bg-amber-100 text-amber-900';
 
 rowsHTML += `
 <tr class="hover:bg-sky-50/50 transition cursor-move border-b border-gray-100" draggable="true">
-<td class="py-3 px-2 text-center no-print select-none">
-  <div class="flex items-center justify-center gap-1.5">
-    <i class="fa-solid fa-grip-vertical text-gray-400 hover:text-gray-700 cursor-grab text-base p-1" title="拖曳排序"></i>
-    <button onclick="window.requestDeleteRow(this)" class="text-gray-400 hover:text-rose-600 transition p-1" title="刪除行程"><i class="fa-solid fa-trash-can text-base"></i></button>
+<td class="py-3 px-1.5 text-center no-print select-none">
+  <div class="flex items-center justify-center gap-1">
+    <i class="fa-solid fa-grip-vertical text-gray-400 hover:text-gray-700 cursor-grab text-xs sm:text-base p-0.5 sm:p-1" title="拖曳排序"></i>
+    <button onclick="window.requestDeleteRow(this)" class="text-gray-400 hover:text-rose-600 transition p-0.5 sm:p-1" title="刪除行程"><i class="fa-solid fa-trash-can text-xs sm:text-base"></i></button>
   </div>
 </td>
-<td class="py-3 px-3 md:px-4 text-sm md:text-base font-bold text-gray-800 editable break-words" contenteditable="true">${item.time}</td>
-<td class="py-3 px-2 md:px-3">
-<select onchange="window.updateRegionStyle(this)" class="region-select ${styleClass} text-xs md:text-sm px-2.5 py-1 rounded-md font-bold">
+<td class="py-3 px-1 sm:px-2 md:px-2.5 text-[17px] md:text-[14px] font-bold text-gray-800 editable break-words" contenteditable="true">${item.time}</td>
+<td class="py-3 px-1 sm:px-2 md:px-3 text-center">
+<select onchange="window.updateRegionStyle(this)" class="region-select ${styleClass} text-xs md:text-sm px-1.5 sm:px-2.5 py-1 rounded-md font-bold max-w-full">
 <option value="北部" ${item.region === '北部' ? 'selected' : ''}>北部</option>
 <option value="中部" ${item.region === '中部' ? 'selected' : ''}>中部</option>
 <option value="那霸" ${item.region === '那霸' ? 'selected' : ''}>那霸</option>
 <option value="台灣" ${item.region === '台灣' ? 'selected' : ''}>台灣</option>
 </select>
 </td>
-<td class="py-3 px-3 md:px-4 text-sm md:text-base font-bold text-sky-950 editable break-words" contenteditable="true">${item.title}</td>
-<td class="py-3 px-3 md:px-4 text-sm md:text-base text-gray-800 font-normal editable break-words leading-relaxed" contenteditable="true">${item.desc}</td>
+<td class="py-3 px-2 sm:px-3 md:px-4 text-[17px] md:text-[14px] font-bold text-sky-950 editable break-words" contenteditable="true">${item.title}</td>
+<td class="py-3 px-2 sm:px-3 md:px-4 text-[16px] md:text-[14px] text-gray-800 font-normal editable break-words leading-relaxed" contenteditable="true">${item.desc}</td>
 </tr>
 `;
 });
@@ -543,14 +641,14 @@ ${deleteDayBtnHTML}
 <div class="md:hidden text-xs text-sky-800 bg-sky-50/90 px-3 py-1.5 flex items-center justify-between border-b border-sky-100 no-print font-bold">
   <span><i class="fa-solid fa-arrows-left-right text-sky-600 mr-1.5"></i>可左右滑動檢視完整表格內容</span>
 </div>
-<table class="w-full text-left border-collapse min-w-[650px] md:min-w-full">
+<table class="w-full text-left border-collapse min-w-[550px] md:min-w-full">
 <thead>
 <tr class="bg-sky-100/70 text-sky-950 text-xs md:text-sm font-bold uppercase border-b border-sky-200">
-<th class="py-3 px-2 w-16 text-center no-print">操作</th>
-<th class="py-3 px-3 md:px-4 w-28 md:w-36">時間</th>
-<th class="py-3 px-2 md:px-3 w-20 md:w-28">地區</th>
-<th class="py-3 px-3 md:px-4 w-40 md:w-56">地點 / 行程</th>
-<th class="py-3 px-3 md:px-4">特色、重點資訊與細節</th>
+<th class="py-3 px-1.5 w-10 sm:w-14 md:w-16 text-center no-print">操作</th>
+<th class="py-3 px-1 sm:px-2 md:px-2.5 w-16 sm:w-20 md:w-28">時間</th>
+<th class="py-3 px-1 sm:px-2 md:px-3 w-14 sm:w-20 md:w-28">地區</th>
+<th class="py-3 px-2 sm:px-3 md:px-4 w-28 sm:w-40 md:w-56">地點 / 行程</th>
+<th class="py-3 px-2 sm:px-3 md:px-4">特色、重點資訊與細節</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-gray-100 text-sm md:text-base">
@@ -638,143 +736,154 @@ window.saveToCloud(true);
 });
 </script>
 
-<!-- 原有 UI 輔助腳本與 Modal 雙重確認邏輯 -->
+<!-- UI 輔助腳本與 Modal 雙重確認邏輯 -->
 <script>
-// Modal 控制邏輯
-let pendingDeleteAction = null;
 
-function showConfirmModal(title, msg, onConfirm) {
+// Modal 關閉控制器
+window.closeConfirmModal = function() {
   const modal = document.getElementById('confirmModal');
   const modalBox = document.getElementById('confirmModalBox');
-  const titleEl = document.getElementById('confirmTitle');
-  const msgEl = document.getElementById('confirmMessage');
-  const confirmBtn = document.getElementById('confirmExecuteBtn');
+  if (modal) {
+    modal.classList.add('opacity-0', 'pointer-events-none');
+    modal.classList.remove('opacity-100', 'pointer-events-auto');
+  }
+  if (modalBox) {
+    modalBox.classList.add('scale-95');
+    modalBox.classList.remove('scale-100');
+  }
+};
 
-  titleEl.textContent = title;
-  msgEl.textContent = msg;
-
-  pendingDeleteAction = onConfirm;
-
-  modal.classList.remove('opacity-0', 'pointer-events-none');
-  modalBox.classList.remove('scale-95');
-  modalBox.classList.add('scale-100');
-
-  confirmBtn.onclick = function() {
-    if (typeof pendingDeleteAction === 'function') {
-      pendingDeleteAction();
-    }
-    closeConfirmModal();
-  };
-}
-
-function closeConfirmModal() {
+// Modal 開啟與確認動作執行器
+window.showConfirmModal = function(title, message, onConfirm) {
   const modal = document.getElementById('confirmModal');
   const modalBox = document.getElementById('confirmModalBox');
+  const confirmTitle = document.getElementById('confirmTitle');
+  const confirmMessage = document.getElementById('confirmMessage');
+  const confirmExecuteBtn = document.getElementById('confirmExecuteBtn');
 
-  modalBox.classList.remove('scale-100');
-  modalBox.classList.add('scale-95');
-  modal.classList.add('opacity-0', 'pointer-events-none');
-  pendingDeleteAction = null;
-}
+  if (confirmTitle) confirmTitle.textContent = title;
+  if (confirmMessage) confirmMessage.textContent = message;
+
+  if (confirmExecuteBtn) {
+    const newBtn = confirmExecuteBtn.cloneNode(true);
+    confirmExecuteBtn.parentNode.replaceChild(newBtn, confirmExecuteBtn);
+    newBtn.addEventListener('click', () => {
+      window.closeConfirmModal();
+      if (onConfirm) onConfirm();
+    });
+  }
+
+  if (modal) {
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.classList.add('opacity-100', 'pointer-events-auto');
+  }
+  if (modalBox) {
+    modalBox.classList.remove('scale-95');
+    modalBox.classList.add('scale-100');
+  }
+};
 
 // 點擊 Modal 外部背景自動關閉
 document.getElementById('confirmModal')?.addEventListener('click', (e) => {
   if (e.target.id === 'confirmModal') {
-    closeConfirmModal();
+    window.closeConfirmModal();
   }
 });
 
-// 顯示提示訊息 (Toast)
-function showToast(msg, isError = false) {
-const toast = document.getElementById('toast');
-const toastMsg = document.getElementById('toastMsg');
-const toastIcon = document.getElementById('toastIcon');
-toastMsg.textContent = msg;
-if (isError) {
-toastIcon.className = "bg-rose-500 text-white p-1.5 rounded-lg text-sm";
-toastIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
-} else {
-toastIcon.className = "bg-emerald-500 text-white p-1.5 rounded-lg text-sm";
-toastIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
-}
 
-toast.classList.remove('opacity-0', '-translate-y-20', 'pointer-events-none');
-setTimeout(() => {
-toast.classList.add('opacity-0', '-translate-y-20', 'pointer-events-none');
-}, 2500);
-}
+// 顯示提示訊息 (Toast)
+window.showToast = function(msg, isError = false) {
+  const toast = document.getElementById('toast');
+  const toastMsg = document.getElementById('toastMsg');
+  const toastIcon = document.getElementById('toastIcon');
+  if (!toast || !toastMsg || !toastIcon) return;
+  
+  toastMsg.textContent = msg;
+  if (isError) {
+    toastIcon.className = "bg-rose-500 text-white p-1.5 rounded-lg text-sm";
+    toastIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+  } else {
+    toastIcon.className = "bg-emerald-500 text-white p-1.5 rounded-lg text-sm";
+    toastIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+  }
+
+  toast.classList.remove('opacity-0', '-translate-y-20', 'pointer-events-none');
+  setTimeout(() => {
+    toast.classList.add('opacity-0', '-translate-y-20', 'pointer-events-none');
+  }, 2500);
+};
 
 // 更新地區選單樣式顏色
-function updateRegionStyle(selectElement) {
-const val = selectElement.value;
-selectElement.className = 'region-select text-xs md:text-sm px-2.5 py-1 rounded-md font-bold ';
-if (val === '北部') {
-selectElement.classList.add('bg-blue-100', 'text-blue-900');
-} else if (val === '中部') {
-selectElement.classList.add('bg-purple-100', 'text-purple-900');
-} else if (val === '那霸') {
-selectElement.classList.add('bg-amber-100', 'text-amber-900');
-} else if (val === '台灣') {
-selectElement.classList.add('bg-gray-200', 'text-gray-800');
-}
-if (window.pushHistoryState) window.pushHistoryState();
-if (window.saveToCloud) window.saveToCloud(true);
-}
+window.updateRegionStyle = function(selectElement) {
+  const val = selectElement.value;
+  selectElement.className = 'region-select text-xs md:text-sm px-2.5 py-1 rounded-md font-bold ';
+  if (val === '北部') {
+    selectElement.classList.add('bg-blue-100', 'text-blue-900');
+  } else if (val === '中部') {
+    selectElement.classList.add('bg-purple-100', 'text-purple-900');
+  } else if (val === '那霸') {
+    selectElement.classList.add('bg-amber-100', 'text-amber-900');
+  } else if (val === '台灣') {
+    selectElement.classList.add('bg-gray-200', 'text-gray-800');
+  }
+  if (window.pushHistoryState) window.pushHistoryState();
+  if (window.saveToCloud) window.saveToCloud(true);
+};
 
 // 新增單列行程
-function addScheduleRow(btn) {
-if (window.pushHistoryState) window.pushHistoryState();
-const tbody = btn.closest('.day-card').querySelector('tbody');
-const tr = document.createElement('tr');
-tr.className = 'hover:bg-sky-50/50 transition cursor-move border-b border-gray-100';
-tr.setAttribute('draggable', 'true');
-tr.innerHTML = `
-<td class="py-3 px-2 text-center no-print select-none">
-  <div class="flex items-center justify-center gap-1.5">
-    <i class="fa-solid fa-grip-vertical text-gray-400 hover:text-gray-700 cursor-grab text-base p-1" title="拖曳排序"></i>
-    <button onclick="requestDeleteRow(this)" class="text-gray-400 hover:text-rose-600 transition p-1" title="刪除行程"><i class="fa-solid fa-trash-can text-base"></i></button>
-  </div>
-</td>
-<td class="py-3 px-3 md:px-4 text-sm md:text-base font-bold text-gray-800 editable break-words" contenteditable="true">新時間段</td>
-<td class="py-3 px-2 md:px-3">
-<select onchange="updateRegionStyle(this)" class="region-select bg-amber-100 text-amber-900 text-xs md:text-sm px-2.5 py-1 rounded-md font-bold">
-<option value="北部">北部</option>
-<option value="中部">中部</option>
-<option value="那霸" selected>那霸</option>
-<option value="台灣">台灣</option>
-</select>
-</td>
-<td class="py-3 px-3 md:px-4 text-sm md:text-base font-bold text-sky-950 editable break-words" contenteditable="true">新增景點或活動</td>
-<td class="py-3 px-3 md:px-4 text-sm md:text-base text-gray-800 font-normal editable break-words leading-relaxed" contenteditable="true">請填寫詳細說明與注意事項...</td>
-`;
-tbody.appendChild(tr);
+window.addScheduleRow = function(btn) {
+  if (window.pushHistoryState) window.pushHistoryState();
+  const tbody = btn.closest('.day-card').querySelector('tbody');
+  const tr = document.createElement('tr');
+  tr.className = 'hover:bg-sky-50/50 transition cursor-move border-b border-gray-100';
+  tr.setAttribute('draggable', 'true');
+  tr.innerHTML = `
+  <td class="py-3 px-1.5 text-center no-print select-none">
+    <div class="flex items-center justify-center gap-1">
+      <i class="fa-solid fa-grip-vertical text-gray-400 hover:text-gray-700 cursor-grab text-xs sm:text-base p-0.5 sm:p-1" title="拖曳排序"></i>
+      <button onclick="window.requestDeleteRow(this)" class="text-gray-400 hover:text-rose-600 transition p-0.5 sm:p-1" title="刪除行程"><i class="fa-solid fa-trash-can text-xs sm:text-base"></i></button>
+    </div>
+  </td>
+  <td class="py-3 px-1 sm:px-2 md:px-2.5 text-[17px] md:text-[14px] font-bold text-gray-800 editable break-words" contenteditable="true">新時間段</td>
+  <td class="py-3 px-1 sm:px-2 md:px-3 text-center">
+  <select onchange="window.updateRegionStyle(this)" class="region-select bg-amber-100 text-amber-900 text-xs md:text-sm px-1.5 sm:px-2.5 py-1 rounded-md font-bold max-w-full">
+  <option value="北部">北部</option>
+  <option value="中部">中部</option>
+  <option value="那霸" selected>那霸</option>
+  <option value="台灣">台灣</option>
+  </select>
+  </td>
+  <td class="py-3 px-2 sm:px-3 md:px-4 text-[17px] md:text-[14px] font-bold text-sky-950 editable break-words" contenteditable="true">新增景點或活動</td>
+  <td class="py-3 px-2 sm:px-3 md:px-4 text-[16px] md:text-[14px] text-gray-800 font-normal editable break-words leading-relaxed" contenteditable="true">請填寫詳細說明與注意事項...</td>
+  `;
+  tbody.appendChild(tr);
 
-if (window.initDragAndDrop) window.initDragAndDrop();
-if (window.pushHistoryState) window.pushHistoryState();
-showToast('已新增行程，並寫入雲端！');
-if (window.saveToCloud) window.saveToCloud(true);
-}
+  if (window.initDragAndDrop) window.initDragAndDrop();
+  if (window.pushHistoryState) window.pushHistoryState();
+  window.showToast('已新增行程，並寫入雲端！');
+  if (window.saveToCloud) window.saveToCloud(true);
+};
 
 // 請求刪除單列行程 (觸發雙重確認)
-function requestDeleteRow(btn) {
+window.requestDeleteRow = function(btn) {
   const tr = btn.closest('tr');
   const titleText = tr.querySelectorAll('td')[3]?.innerText.trim() || '該行程項目';
 
-  showConfirmModal(
+  window.showConfirmModal(
     '確認刪除行程',
     `您確定要刪除「${titleText}」嗎？點擊確認後可透過頂部「復原」按鈕回復。`,
-    () => deleteRow(tr)
+    () => window.deleteRow(tr)
   );
-}
+};
 
 // 執行刪除單列行程
-function deleteRow(tr) {
+window.deleteRow = function(tr) {
   if (window.pushHistoryState) window.pushHistoryState();
   tr.remove();
   if (window.pushHistoryState) window.pushHistoryState();
-  showToast('已刪除該行程項目');
+  window.showToast('已刪除該行程項目');
   if (window.saveToCloud) window.saveToCloud(true);
-}
+};
 
 // 請求刪除整天行程 (觸發雙重確認)
 window.requestDeleteDay = function(btn) {
@@ -782,7 +891,7 @@ window.requestDeleteDay = function(btn) {
   const dayNum = dayCard.getAttribute('data-day');
   const dayTitle = dayCard.querySelector('h2')?.innerText.trim() || `Day ${dayNum}`;
 
-  showConfirmModal(
+  window.showConfirmModal(
     '確認刪除天數',
     `您確定要刪除「${dayTitle}」及其所有行程內容嗎？此動作可透過頂部「復原」按鈕恢復。`,
     () => window.deleteDay(dayCard)
@@ -794,20 +903,17 @@ window.deleteDay = function(dayCard) {
   if (window.pushHistoryState) window.pushHistoryState();
   dayCard.remove();
 
-  // 重新調整剩餘天數的 Day 編號與刪除按鈕狀態
   const dayCards = document.querySelectorAll('.day-card');
   dayCards.forEach((card, idx) => {
     const newDayNum = idx + 1;
     card.setAttribute('data-day', newDayNum);
     card.id = `day-card-${newDayNum}`;
     
-    // 更新 Day 標籤
     const badge = card.querySelector('span.bg-sky-800');
     if (badge) {
       badge.textContent = `Day ${newDayNum}`;
     }
 
-    // 動態維護刪除按鈕 (僅 Day > 5 保留)
     const headerBtns = card.querySelector('.flex.items-center.gap-2.no-print');
     if (headerBtns) {
       let delBtn = headerBtns.querySelector('.btn-delete-day');
@@ -827,115 +933,116 @@ window.deleteDay = function(dayCard) {
 
   const data = window.extractScheduleData();
   if (window.renderDayNav) window.renderDayNav(data);
+  if (window.setupScrollSpy) window.setupScrollSpy();
   if (window.pushHistoryState) window.pushHistoryState();
-  showToast('已成功刪除該天數！');
+  window.showToast('已成功刪除該天數！');
   if (window.saveToCloud) window.saveToCloud(true);
 };
 
+
 // 計算指定天數對應的日期與星期 (以 2026/08/06 出發為基準 Day 1)
 function getCalculatedDateString(dayIndex) {
-const startDate = new Date(2026, 7, 6);
-const targetDate = new Date(startDate);
-targetDate.setDate(startDate.getDate() + (dayIndex - 1));
+  const startDate = new Date(2026, 7, 6);
+  const targetDate = new Date(startDate);
+  targetDate.setDate(startDate.getDate() + (dayIndex - 1));
 
-const month = String(targetDate.getMonth() + 1).padStart(2, '0');
-const date = String(targetDate.getDate()).padStart(2, '0');
-const weekDays = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
-const weekDayStr = weekDays[targetDate.getDay()];
+  const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+  const date = String(targetDate.getDate()).padStart(2, '0');
+  const weekDays = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+  const weekDayStr = weekDays[targetDate.getDay()];
 
-return `${month}月${date}日 (${weekDayStr})`;
+  return `${month}月${date}日 (${weekDayStr})`;
 }
 
 // 新增天數卡片
-function addNewDay() {
-if (window.pushHistoryState) window.pushHistoryState();
+window.addNewDay = function() {
+  if (window.pushHistoryState) window.pushHistoryState();
 
-const container = document.getElementById('scheduleContainer');
-const totalDays = container.querySelectorAll('.day-card').length + 1;
-const dayDiv = document.createElement('div');
-dayDiv.className = 'day-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-200';
-dayDiv.setAttribute('data-day', totalDays);
-dayDiv.id = `day-card-${totalDays}`;
+  const container = document.getElementById('scheduleContainer');
+  const totalDays = container.querySelectorAll('.day-card').length + 1;
+  const dayDiv = document.createElement('div');
+  dayDiv.className = 'day-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-200';
+  dayDiv.setAttribute('data-day', totalDays);
+  dayDiv.id = `day-card-${totalDays}`;
 
-// 新增的天數 (Day 6+) 顯示刪除按鈕
-let deleteDayBtnHTML = '';
-if (totalDays > 5) {
-  deleteDayBtnHTML = `
-    <button onclick="window.requestDeleteDay(this)" class="btn-delete-day bg-rose-500 hover:bg-rose-600 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow">
-      <i class="fa-solid fa-trash-can"></i> 刪除此天
-    </button>
-  `;
-}
+  let deleteDayBtnHTML = '';
+  if (totalDays > 5) {
+    deleteDayBtnHTML = `
+      <button onclick="window.requestDeleteDay(this)" class="btn-delete-day bg-rose-500 hover:bg-rose-600 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow">
+        <i class="fa-solid fa-trash-can"></i> 刪除此天
+      </button>
+    `;
+  }
 
-const formattedDateStr = getCalculatedDateString(totalDays);
-dayDiv.innerHTML = `
-<div class="bg-sky-600 text-white px-4 md:px-6 py-3.5 md:py-4 flex flex-wrap justify-between items-center gap-2">
-<div class="flex flex-col gap-1">
-<div>
-<span class="bg-sky-800 text-sky-100 text-xs md:text-sm font-bold px-3 py-1 rounded-full uppercase tracking-wide inline-block">Day ${totalDays}</span>
-</div>
-<h2 class="text-xl md:text-2xl font-bold editable" contenteditable="true">${formattedDateStr} － 自訂行程地點</h2>
-</div>
-<div class="flex items-center gap-2 text-xs md:text-sm no-print">
-<button onclick="addScheduleRow(this)" class="bg-sky-500 hover:bg-sky-700 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow">
-<i class="fa-solid fa-plus"></i> 新增行程
-</button>
-${deleteDayBtnHTML}
-</div>
-</div>
-
-<div class="overflow-x-auto relative">
-<div class="md:hidden text-xs text-sky-800 bg-sky-50/90 px-3 py-1.5 flex items-center justify-between border-b border-sky-100 no-print font-bold">
-  <span><i class="fa-solid fa-arrows-left-right text-sky-600 mr-1.5"></i>可左右滑動檢視完整表格內容</span>
-</div>
-<table class="w-full text-left border-collapse min-w-[650px] md:min-w-full">
-<thead>
-<tr class="bg-sky-100/70 text-sky-950 text-xs md:text-sm font-bold uppercase border-b border-sky-200">
-<th class="py-3 px-2 w-16 text-center no-print">操作</th>
-<th class="py-3 px-3 md:px-4 w-28 md:w-36">時間</th>
-<th class="py-3 px-2 md:px-3 w-20 md:w-28">地區</th>
-<th class="py-3 px-3 md:px-4 w-40 md:w-56">地點 / 行程</th>
-<th class="py-3 px-3 md:px-4">特色、重點資訊與細節</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-gray-100 text-sm md:text-base">
-<tr class="hover:bg-sky-50/50 transition cursor-move border-b border-gray-100" draggable="true">
-<td class="py-3 px-2 text-center no-print select-none">
-  <div class="flex items-center justify-center gap-1.5">
-    <i class="fa-solid fa-grip-vertical text-gray-400 hover:text-gray-700 cursor-grab text-base p-1" title="拖曳排序"></i>
-    <button onclick="requestDeleteRow(this)" class="text-gray-400 hover:text-rose-600 transition p-1" title="刪除行程"><i class="fa-solid fa-trash-can text-base"></i></button>
+  const formattedDateStr = getCalculatedDateString(totalDays);
+  dayDiv.innerHTML = `
+  <div class="bg-sky-600 text-white px-4 md:px-6 py-3.5 md:py-4 flex flex-wrap justify-between items-center gap-2">
+  <div class="flex flex-col gap-1">
+  <div>
+  <span class="bg-sky-800 text-sky-100 text-xs md:text-sm font-bold px-3 py-1 rounded-full uppercase tracking-wide inline-block">Day ${totalDays}</span>
   </div>
-</td>
-<td class="py-3 px-3 md:px-4 text-sm md:text-base font-bold text-gray-800 editable break-words" contenteditable="true">09:00 - 12:00</td>
-<td class="py-3 px-2 md:px-3">
-<select onchange="updateRegionStyle(this)" class="region-select bg-amber-100 text-amber-900 text-xs md:text-sm px-2.5 py-1 rounded-md font-bold">
-<option value="北部">北部</option>
-<option value="中部">中部</option>
-<option value="那霸" selected>那霸</option>
-<option value="台灣">台灣</option>
-</select>
-</td>
-<td class="py-3 px-3 md:px-4 text-sm md:text-base font-bold text-sky-950 editable break-words" contenteditable="true">行程名稱</td>
-<td class="py-3 px-3 md:px-4 text-sm md:text-base text-gray-800 font-normal editable break-words leading-relaxed" contenteditable="true">行程注意事項...</td>
-</tr>
-</tbody>
-</table>
-</div>
-`;
-container.appendChild(dayDiv);
+  <h2 class="text-xl md:text-2xl font-bold editable" contenteditable="true">${formattedDateStr} － 自訂行程地點</h2>
+  </div>
+  <div class="flex items-center gap-2 text-xs md:text-sm no-print">
+  <button onclick="window.addScheduleRow(this)" class="bg-sky-500 hover:bg-sky-700 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow">
+  <i class="fa-solid fa-plus"></i> 新增行程
+  </button>
+  ${deleteDayBtnHTML}
+  </div>
+  </div>
 
-if (window.renderDayNav) {
-  const data = window.extractScheduleData();
-  renderDayNav(data);
-}
-if (window.initDragAndDrop) window.initDragAndDrop();
-if (window.pushHistoryState) window.pushHistoryState();
-showToast(`已成功新增 Day ${totalDays} 的行程頁面！`);
-if (window.saveToCloud) window.saveToCloud(true);
-}
+  <div class="overflow-x-auto relative">
+  <div class="md:hidden text-xs text-sky-800 bg-sky-50/90 px-3 py-1.5 flex items-center justify-between border-b border-sky-100 no-print font-bold">
+    <span><i class="fa-solid fa-arrows-left-right text-sky-600 mr-1.5"></i>可左右滑動檢視完整表格內容</span>
+  </div>
+  <table class="w-full text-left border-collapse min-w-[550px] md:min-w-full">
+  <thead>
+  <tr class="bg-sky-100/70 text-sky-950 text-xs md:text-sm font-bold uppercase border-b border-sky-200">
+  <th class="py-3 px-1.5 w-10 sm:w-14 md:w-16 text-center no-print">操作</th>
+  <th class="py-3 px-1 sm:px-2 md:px-2.5 w-16 sm:w-20 md:w-28">時間</th>
+  <th class="py-3 px-1 sm:px-2 md:px-3 w-14 sm:w-20 md:w-28">地區</th>
+  <th class="py-3 px-2 sm:px-3 md:px-4 w-28 sm:w-40 md:w-56">地點 / 行程</th>
+  <th class="py-3 px-2 sm:px-3 md:px-4">特色、重點資訊與細節</th>
+  </tr>
+  </thead>
+  <tbody class="divide-y divide-gray-100 text-sm md:text-base">
+  <tr class="hover:bg-sky-50/50 transition cursor-move border-b border-gray-100" draggable="true">
+  <td class="py-3 px-1.5 text-center no-print select-none">
+    <div class="flex items-center justify-center gap-1">
+      <i class="fa-solid fa-grip-vertical text-gray-400 hover:text-gray-700 cursor-grab text-xs sm:text-base p-0.5 sm:p-1" title="拖曳排序"></i>
+      <button onclick="window.requestDeleteRow(this)" class="text-gray-400 hover:text-rose-600 transition p-0.5 sm:p-1" title="刪除行程"><i class="fa-solid fa-trash-can text-xs sm:text-base"></i></button>
+    </div>
+  </td>
+  <td class="py-3 px-1 sm:px-2 md:px-2.5 text-[17px] md:text-[14px] font-bold text-gray-800 editable break-words" contenteditable="true">09:00 - 12:00</td>
+  <td class="py-3 px-1 sm:px-2 md:px-3 text-center">
+  <select onchange="window.updateRegionStyle(this)" class="region-select bg-amber-100 text-amber-900 text-xs md:text-sm px-1.5 sm:px-2.5 py-1 rounded-md font-bold max-w-full">
+  <option value="北部">北部</option>
+  <option value="中部">中部</option>
+  <option value="那霸" selected>那霸</option>
+  <option value="台灣">台灣</option>
+  </select>
+  </td>
+  <td class="py-3 px-2 sm:px-3 md:px-4 text-[17px] md:text-[14px] font-bold text-sky-950 editable break-words" contenteditable="true">行程名稱</td>
+  <td class="py-3 px-2 sm:px-3 md:px-4 text-[16px] md:text-[14px] text-gray-800 font-normal editable break-words leading-relaxed" contenteditable="true">行程注意事項...</td>
+  </tr>
+  </tbody>
+  </table>
+  </div>
+  `;
+  container.appendChild(dayDiv);
+
+  if (window.renderDayNav) {
+    const data = window.extractScheduleData();
+    window.renderDayNav(data);
+  }
+  if (window.initDragAndDrop) window.initDragAndDrop();
+  if (window.pushHistoryState) window.pushHistoryState();
+  window.showToast(`已成功新增 Day ${totalDays} 的行程頁面！`);
+  if (window.saveToCloud) window.saveToCloud(true);
+};
 
 // 搜尋過濾行程項目
-function filterSchedule() {
+window.filterSchedule = function() {
   const input = document.getElementById('searchInput').value.toLowerCase();
   const rows = document.querySelectorAll('#scheduleContainer tbody tr');
 
@@ -947,7 +1054,7 @@ function filterSchedule() {
       row.style.display = 'none';
     }
   });
-}
+};
 </script>
 </body>
 </html>
